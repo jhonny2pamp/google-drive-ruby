@@ -274,8 +274,8 @@ module GoogleDrive
         0
     end
 
-    def num_cols_each_100(start_with)
-      reload_cells_each_100(start_with) unless @cells
+    def num_cols_each_n(start_with, n)
+      reload_cells_each_n(start_with, n) unless @cells
       # Memoizes it because this can be bottle-neck.
       # https://github.com/gimite/google-drive-ruby/pull/49
       @num_cols ||=
@@ -338,9 +338,9 @@ module GoogleDrive
       result.freeze
     end
 
-    def rows_each_100(start_with)
-      nc = num_cols_each_100(start_with)
-      result = (start_with..(start_with + 100)).map do |row|
+    def rows_each_n(start_with, n)
+      nc = num_cols_each_n(start_with, n)
+      result = (start_with..(start_with + n)).map do |row|
         (1..nc).map { |col| self[row, col] }.freeze
       end
       result.freeze
@@ -701,17 +701,17 @@ module GoogleDrive
       response =
           @session.sheets_service.get_spreadsheet(
               spreadsheet.id,
-              ranges: "A1:C3" % @remote_title,
+              ranges: "'%s'" % @remote_title,
               fields: 'sheets.data.rowData.values(formattedValue,userEnteredValue,effectiveValue)'
           )
       update_cells_from_api_sheet(response.sheets[0])
     end
 
-    def reload_cells_each_100(start_with)
+    def reload_cells_each_n(start_with, n)
       response =
           @session.sheets_service.get_spreadsheet(
               spreadsheet.id,
-              ranges: "1:3" % @remote_title,
+              ranges: "#{start_with}:#{start_with + n}" % @remote_title,
               fields: 'sheets.data.rowData.values(formattedValue,userEnteredValue,effectiveValue)'
           )
       update_cells_from_api_sheet(response.sheets[0])
