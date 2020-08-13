@@ -48,8 +48,8 @@ module GoogleDrive
     end
 
     # Returns worksheets of the spreadsheet as array of GoogleDrive::Worksheet.
-    def worksheets
-      api_spreadsheet = @session.sheets_service.get_spreadsheet(id, fields: 'sheets.properties')
+    def worksheets(range: nil)
+      api_spreadsheet = @session.sheets_service.get_spreadsheet(id, fields: 'sheets.properties',ranges: range)
       api_spreadsheet.sheets.map{ |s| Worksheet.new(@session, self, s.properties) }
     end
 
@@ -77,7 +77,7 @@ module GoogleDrive
     # When +index+ is specified, the worksheet is inserted at the given
     # +index+.
     def add_worksheet(title, max_rows = 100, max_cols = 20, index: nil)
-      (response,) = batch_update([{
+      response = batch_update([{
         add_sheet: {
           properties: {
             title: title,
