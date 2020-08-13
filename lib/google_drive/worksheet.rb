@@ -681,7 +681,7 @@ module GoogleDrive
       response =
           @session.sheets_service.get_spreadsheet(
               spreadsheet.id,
-              ranges: "'%s'" % @remote_title,
+              ranges: "1:1" % @remote_title,
               fields: 'sheets.data.rowData.values(formattedValue,userEnteredValue,effectiveValue)'
           )
       update_cells_from_api_sheet(response.sheets[0])
