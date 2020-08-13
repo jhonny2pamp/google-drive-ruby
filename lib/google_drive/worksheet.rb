@@ -320,7 +320,7 @@ module GoogleDrive
     #   worksheet.rows[0][0] == worksheet[1, 1]
     def rows(skip = 0)
       nc = num_cols
-      result = ((1 + skip)..4).map do |row|
+      result = ((1 + skip)..num_rows).map do |row|
         (1..nc).map { |col| self[row, col] }.freeze
       end
       result.freeze
@@ -689,7 +689,7 @@ module GoogleDrive
       response =
           @session.sheets_service.get_spreadsheet(
               spreadsheet.id,
-              ranges: "1:1" % @remote_title,
+              ranges: "'%s'" % @remote_title,
               fields: 'sheets.data.rowData.values(formattedValue,userEnteredValue,effectiveValue)'
           )
       update_cells_from_api_sheet(response.sheets[0])
