@@ -320,7 +320,7 @@ module GoogleDrive
     #   worksheet.rows[0][0] == worksheet[1, 1]
     def rows(skip = 0)
       nc = num_cols
-      result = ((1 + skip)..num_rows).map do |row|
+      result = ((1 + skip)..4).map do |row|
         (1..nc).map { |col| self[row, col] }.freeze
       end
       result.freeze
