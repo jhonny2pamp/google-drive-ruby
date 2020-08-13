@@ -274,6 +274,18 @@ module GoogleDrive
         0
     end
 
+    def num_cols_each_100(start_with)
+      reload_cells_each_100(start_with) unless @cells
+      # Memoizes it because this can be bottle-neck.
+      # https://github.com/gimite/google-drive-ruby/pull/49
+      @num_cols ||=
+        @input_values
+          .reject { |(_r, _c), v| v.empty? }
+          .map { |(_r, c), _v| c }
+          .max ||
+          0
+    end
+
     # Number of rows including empty rows.
     attr_reader :max_rows
 
@@ -327,8 +339,8 @@ module GoogleDrive
     end
 
     def rows_each_100(start_with)
-      nc = num_cols
-      result = (start_with..(start_with + 4)).map do |row|
+      nc = num_cols_each_100(start_with)
+      result = (start_with..(start_with + 100)).map do |row|
         (1..nc).map { |col| self[row, col] }.freeze
       end
       result.freeze
@@ -690,6 +702,16 @@ module GoogleDrive
           @session.sheets_service.get_spreadsheet(
               spreadsheet.id,
               ranges: "A1:C3" % @remote_title,
+              fields: 'sheets.data.rowData.values(formattedValue,userEnteredValue,effectiveValue)'
+          )
+      update_cells_from_api_sheet(response.sheets[0])
+    end
+
+    def reload_cells_each_100(start_with)
+      response =
+          @session.sheets_service.get_spreadsheet(
+              spreadsheet.id,
+              ranges: "1:3" % @remote_title,
               fields: 'sheets.data.rowData.values(formattedValue,userEnteredValue,effectiveValue)'
           )
       update_cells_from_api_sheet(response.sheets[0])
