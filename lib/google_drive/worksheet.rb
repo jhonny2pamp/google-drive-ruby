@@ -326,6 +326,14 @@ module GoogleDrive
       result.freeze
     end
 
+    def rows_each_100(start_with)
+      nc = num_cols
+      result = (start_with..(start_with + 4)).map do |row|
+        (1..nc).map { |col| self[row, col] }.freeze
+      end
+      result.freeze
+    end
+
     # Inserts rows.
     #
     # e.g.

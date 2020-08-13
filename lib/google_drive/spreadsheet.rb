@@ -48,8 +48,8 @@ module GoogleDrive
     end
 
     # Returns worksheets of the spreadsheet as array of GoogleDrive::Worksheet.
-    def worksheets(range: nil)
-      api_spreadsheet = @session.sheets_service.get_spreadsheet(id, fields: 'sheets.properties',ranges: range)
+    def worksheets
+      api_spreadsheet = @session.sheets_service.get_spreadsheet(id, fields: 'sheets.properties')
       api_spreadsheet.sheets.map{ |s| Worksheet.new(@session, self, s.properties) }
     end
 
