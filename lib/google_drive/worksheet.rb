@@ -339,10 +339,10 @@ module GoogleDrive
     end
 
     def rows_each_n(start_with, n)
-      # nc = num_cols_each_n(1, 20)
+      nc = num_cols_each_n(1, 9)
       result = (start_with..(start_with + n)).map do |row|
         puts self
-        (1..9).map { |col| self[row, col] }.freeze
+        (1..nc).map { |col| self[row, col] }.freeze
       end
       result.freeze
     end
