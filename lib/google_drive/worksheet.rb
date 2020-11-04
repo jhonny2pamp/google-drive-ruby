@@ -275,7 +275,7 @@ module GoogleDrive
     end
 
     def num_cols_each_n(start_with, n)
-      reload_cells_each_n(start_with, n) unless @cells
+      reload_cells_each_n(start_with, n)
       # Memoizes it because this can be bottle-neck.
       # https://github.com/gimite/google-drive-ruby/pull/49
       @num_cols ||=
@@ -339,8 +339,8 @@ module GoogleDrive
     end
 
     def rows_each_n(start_with, n)
-      nc = num_cols_each_n(1, n)
-      result = (start_with..(start_with + n)).map do |row|
+      nc = num_cols_each_n(start_with, n)
+      result = (1..n).map do |row|
         (1..nc).map { |col| self[row, col] }.freeze
       end
       result.freeze
